@@ -62,7 +62,7 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 
 		customName = getConfigDataComponent("custom-name", null);
 
-		particle = ConfigDataUtil.getParticle(config.getMainConfig(), internalKey + "particle", Particle.EXPLOSION_NORMAL);
+		particle = ConfigDataUtil.getParticle(config.getMainConfig(), internalKey + "particle", Particle.POOF);
 
 		blockData = getConfigDataBlockData("material", null);
 		dustOptions = ConfigDataUtil.getDustOptions(config.getMainConfig(), internalKey + "dust-color", internalKey + "size", new DustOptions(Color.RED, 1));

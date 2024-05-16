@@ -1,3 +1,4 @@
+<!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
     <br>
     <img src="https://files.jasperlorelai.eu/magicspells/images/readme_icon.png" alt="MagicSpells Icon">
@@ -12,6 +13,8 @@
 
 [//]: # (These links are here for easier hyperlink referencing and less clutter in the actual text below.)
 [Discord server]: https://discord.magicspells.dev
+[resources channel]: https://canary.discord.com/channels/335237931633606656/1062270620911550524
+[workshop channel]: https://canary.discord.com/channels/335237931633606656/1020045264343552010
 [Releases]: https://github.com/TheComputerGeek2/MagicSpells/releases
 [Wiki]: https://github.com/TheComputerGeek2/MagicSpells/wiki
 [SpellRepo]: https://github.com/niblexis/ms-examples
@@ -22,12 +25,13 @@
 [Spigot]: https://www.spigotmc.org/resources/magicspells.60847/
 [PaperMC]: https://papermc.io/
 [Modrinth]: https://modrinth.com/plugin/magicspells
+[Hangar]: https://hangar.papermc.io/MagicSpells/MagicSpells
 [DiscordBadge]: https://img.shields.io/badge/Join%20our%20Discord-blue?style=for-the-badge&color=586ff2
 [WelcomeChannel]: https://files.jasperlorelai.eu/magicspells/images/readme_discord_screenshot.png
 
 MagicSpells is a [PaperMC] plugin which gives its users the ability to modify their Minecraft servers by configuring existing features without writing Java code. It provides you with the tools for playing with blocks of logic, bringing other plugins together, playing fantastic special effects, making your own new mechanics, and more.
 
-Check out more examples of what this plugin can do in our [Discord server].
+Check out more examples of what this plugin can do in our [Discord server] (in the [resources channel] and [workshop channel]).
 
 ---
 ## Resources 📝
@@ -44,7 +48,7 @@ Check out more examples of what this plugin can do in our [Discord server].
 ---
 ## Classical MagicSpells ⭐
 
-This plugin was originally created by [Nisovin], and published on [Bukkit]. After some time TheComputerGeek2 took over the project and published it on [Spigot]. Since then, we dropped support for Spigot and moved to [PaperMC], and the plugin was published on [Modrinth].
+This plugin was originally created by [Nisovin], and published on [Bukkit]. After some time TheComputerGeek2 took over the project and published it on [Spigot]. Since then, we dropped support for Spigot and moved to [PaperMC], and the plugin was published on [Modrinth] and [Hangar].
 
 
 

@@ -48,7 +48,7 @@ public class CrippleSpell extends TargetedSpell implements TargetedEntitySpell {
 			int duration = this.duration.get(data);
 			if (powerAffectsDuration.get(data)) duration = Math.round(duration * data.power());
 
-			data.target().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, duration, strength));
+			data.target().addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, duration, strength));
 		}
 
 		if (applyPortalCooldown.get(data)) {

@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7"
 }
 
 dependencies {
@@ -12,7 +12,7 @@ dependencies {
     shadow(group: "org.bstats", name: "bstats-bukkit", version: "3.0.2")
 
     shadow(project(path: ":nms:shared", configuration: "apiElements"))
-    shadow(project(path: ":nms:v1_20_4", configuration: "reobf"))
+    shadow(project(path: ":nms:v1_20_6")) { transitive = false }
 
     implementation(group: "com.comphenix.protocol", name: "ProtocolLib", version: "5.1.0") { transitive = false }
     implementation(group: "com.github.libraryaddict", name: "LibsDisguises", version: "v10.0.25") { transitive = false }
@@ -47,6 +47,14 @@ base {
     archivesName = "MagicSpells"
 }
 
+jar {
+    manifest {
+        attributes(
+            "paperweight-mappings-namespace": "mojang"
+        )
+    }
+}
+
 shadowJar {
     configurations = [project.configurations.shadow]
 
@@ -61,14 +69,14 @@ shadowJar {
 
 compileKotlin {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget.set(JvmTarget.JVM_21)
         javaParameters.set(true)
     }
 }
 
 compileTestKotlin {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 

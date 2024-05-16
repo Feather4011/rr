@@ -1,4 +1,4 @@
-package com.nisovin.magicspells.volatilecode.v1_20_4
+package com.nisovin.magicspells.volatilecode.v1_20_6
 
 import java.util.*
 
@@ -14,10 +14,10 @@ import org.bukkit.inventory.RecipeChoice
 import org.bukkit.event.entity.ExplosionPrimeEvent
 import org.bukkit.inventory.SmithingTransformRecipe
 
-import org.bukkit.craftbukkit.v1_20_R3.entity.*
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack
+import org.bukkit.craftbukkit.entity.*
+import org.bukkit.craftbukkit.CraftWorld
+import org.bukkit.craftbukkit.CraftServer
+import org.bukkit.craftbukkit.inventory.CraftItemStack
 
 import net.kyori.adventure.text.Component
 
@@ -31,8 +31,6 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.network.protocol.game.*
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.item.PrimedTnt
-import net.minecraft.world.item.alchemy.PotionUtils
-import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.advancements.critereon.ImpossibleTrigger
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
@@ -41,21 +39,37 @@ import net.minecraft.network.protocol.common.custom.GameTestClearMarkersDebugPay
 
 import com.nisovin.magicspells.volatilecode.VolatileCodeHandle
 import com.nisovin.magicspells.volatilecode.VolatileCodeHelper
+import net.minecraft.core.particles.ColorParticleOption
+import net.minecraft.core.particles.ParticleOptions
+import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.network.syncher.EntityDataAccessor
+import net.minecraft.util.FastColor
+import java.lang.reflect.Method
 
-class VolatileCode_v1_20_4(helper: VolatileCodeHelper) : VolatileCodeHandle(helper) {
+class VolatileCode_v1_20_6(helper: VolatileCodeHelper) : VolatileCodeHandle(helper) {
 
     private val toastKey = ResourceLocation("magicspells", "toast_effect")
 
-    private var entityLivingPotionEffectColor: EntityDataAccessor<Int>? = null
+    private var DATA_EFFECT_PARTICLES: EntityDataAccessor<List<ParticleOptions>>? = null
+    private var DATA_EFFECT_AMBIENCE_ID: EntityDataAccessor<Boolean>? = null
+    private var UPDATE_EFFECT_PARTICLES: Method? = null
 
     init {
         try {
-            // CHANGE THIS TO SPIGOT MAPPING VERSION OF MOJANG'S - EntityDataAccessor<Integer> DATA_EFFECT_COLOR_ID
-            val entityLivingPotionEffectColorField = net.minecraft.world.entity.LivingEntity::class.java.getDeclaredField("bI")
-            entityLivingPotionEffectColorField.isAccessible = true
-            entityLivingPotionEffectColor = entityLivingPotionEffectColorField.get(null) as EntityDataAccessor<Int>
+            val dataEffectParticlesField = net.minecraft.world.entity.LivingEntity::class.java.getDeclaredField("DATA_EFFECT_PARTICLES")
+            dataEffectParticlesField.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            DATA_EFFECT_PARTICLES = dataEffectParticlesField.get(null) as EntityDataAccessor<List<ParticleOptions>>
+
+            val dataEffectAmbienceIdField = net.minecraft.world.entity.LivingEntity::class.java.getDeclaredField("DATA_EFFECT_AMBIENCE_ID")
+            dataEffectAmbienceIdField.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            DATA_EFFECT_AMBIENCE_ID = dataEffectAmbienceIdField.get(null) as EntityDataAccessor<Boolean>
+
+            UPDATE_EFFECT_PARTICLES = net.minecraft.world.entity.LivingEntity::class.java.getDeclaredMethod("updateSynchronizedMobEffectParticles")
+            UPDATE_EFFECT_PARTICLES!!.isAccessible = true
         } catch (e: Exception) {
-            helper.error("THIS OCCURRED WHEN CREATING THE VOLATILE CODE HANDLE FOR 1.20.4, THE FOLLOWING ERROR IS MOST LIKELY USEFUL IF YOU'RE RUNNING THE LATEST VERSION OF MAGICSPELLS.")
+            helper.error("Encountered an error while creating the volatile code handler for 1.20.6.")
             e.printStackTrace()
         }
     }
@@ -63,17 +77,19 @@ class VolatileCode_v1_20_4(helper: VolatileCodeHelper) : VolatileCodeHandle(help
     override fun addPotionGraphicalEffect(entity: LivingEntity, color: Int, duration: Long) {
         val livingEntity = (entity as CraftLivingEntity).handle
         val entityData = livingEntity.entityData
-        entityData.set(entityLivingPotionEffectColor, color)
 
-        if (duration > 0) {
+        entityData.set(
+            DATA_EFFECT_PARTICLES!!, Collections.singletonList(
+                ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, FastColor.ARGB32.color(255, color))
+            )
+        )
+
+        entityData.set(DATA_EFFECT_AMBIENCE_ID!!, false)
+
+        if (duration > 0)
             helper.scheduleDelayedTask({
-                var c = 0
-                if (livingEntity.getActiveEffects().isNotEmpty()) {
-                    c = PotionUtils.getColor(livingEntity.getActiveEffects())
-                }
-                entityData.set(entityLivingPotionEffectColor, c)
+                UPDATE_EFFECT_PARTICLES!!.invoke(livingEntity)
             }, duration)
-        }
     }
 
     override fun sendFakeSlotUpdate(player: Player, slot: Int, item: ItemStack?) {

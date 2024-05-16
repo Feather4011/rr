@@ -406,7 +406,7 @@ public class EntityData {
 		Util.applyRelativeOffset(spawnLocation, relativeOffset.setY(0));
 
 		EntityType type = this.entityType.get(data);
-		if (type == null || (!type.isSpawnable() && type != EntityType.FALLING_BLOCK && type != EntityType.DROPPED_ITEM))
+		if (type == null || (!type.isSpawnable() && type != EntityType.FALLING_BLOCK && type != EntityType.ITEM))
 			return null;
 
 		Class<? extends Entity> entityClass = type.getEntityClass();
